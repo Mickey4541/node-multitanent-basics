@@ -12,6 +12,10 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
             allowNull : false
         },
+        currentOrganization :{
+            type : DataTypes.STRING,
+            allowNull : true
+        }
     });
     return User;
 };
