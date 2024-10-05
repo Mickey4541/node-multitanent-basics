@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat UI</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .chat-container {
+            background-color: white;
+            border-radius: 8px;
+            width: 400px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            flex-direction: column;
+            height: 500px;
+            overflow: hidden;
+        }
+        .chat-header {
+            background-color: #007bff;
+            color: white;
+            padding: 15px;
+            text-align: center;
+            font-size: 18px;
+        }
+        .chat-body {
+            flex: 1;
+            padding: 10px;
+            overflow-y: auto;
+            background-color: #f9f9f9;
+        }
+        .message {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 8px;
+            max-width: 80%;
+        }
+        #chat-messages {
+            background-color: #f0f0f0;
+            color: black;
+            align-self: flex-end;
+            font-size: 20px;
+        }
+        .chat-footer {
+            display: flex;
+            padding: 10px;
+            background-color: #fff;
+            border-top: 1px solid #ddd;
+        }
+        .chat-footer input[type="text"] {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            outline: none;
+        }
+        .chat-footer button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin-left: 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .chat-footer button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="chat-container">
+    <div class="chat-header">
+        Chat Room
+    </div>
+    <div class="chat-body" id="chat-body">
+        <div class="message">Hello, how can I help you?</div>
+        <!-- <div class="message user">I need help with my project.</div> -->
+         <div id="chat-messages">
+            <!--Chat messages appear here-->
+
+         </div>
+    </div>
+    <div class="chat-footer">
+        <form id="chat-form">
+            <input type="text" id="chat-input" placeholder="Type your message..." />
+            <button type="submit">Send</button>
+        </form>
+    </div>
+</div>
+<script src="https://cdn.socket.io/4.7.5/socket.io.min.js" integrity="sha384-2huaZvOR9iDzHqslqwpR87isEmrfxqyWOF7hr7BY6KG0+hVKLoEXMPUJw3ynWuhO" crossorigin="anonymous"></script>
+
+<script>
+    var socket = io()
+    var message = document.getElementById("chat-input")
+    var form = document.getElementById("chat-form")
+    var chatMessageContainer = document.getElementById("chat-messages")
+
+    
+    form.addEventListener("submit",(e)=>{
+        e.preventDefault();
+        console.log(message.value);
+        
+        if(message.value){
+                const data ={
+            message : message.value,
+            senderId : 1,
+            receiverId : 2
+        }
+            //socket maa emit garni
+            socket.emit("message", data)
+            message.value = ""
+        }
+    })
+
+    //receiving the broadcasted msg:::
+    socket.on("broadCastMessage",(msg)=>{
+        //console.log(msg)
+        const paragraph = document.createElement("p") //<p>...</p>
+        paragraph.textContent = msg //<p>hey there</p>
+        chatMessageContainer.appendChild(paragraph)
+    })
+</script>
+</body>
+</html>
