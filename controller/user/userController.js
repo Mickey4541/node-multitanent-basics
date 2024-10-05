@@ -1,8 +1,8 @@
-const { users } = require("../../model");
+const { users, sequelize } = require("../../model");
 const bcrypt = require("bcryptjs")
-const jwt = require("jsonwebtoken");
-
-
+const jwt = require("jsonwebtoken")
+const db = require("../../model/index")
+const { QueryTypes } = require("sequelize")
 
 
 
@@ -53,7 +53,7 @@ exports.loginUser = async (req, res) => {
     //aani findbypk or findone garim vani tala length ==0 garera length check
     //garako xam tyo garna paidaina.
     if (associateDataWithEmail.length == 0) {
-        res.send("User with thar email doesn't exists")
+        res.send("User with that email doesn't exists")
     } else {
         //check if password also matches
         const associateDataWithEmailPassowrd = associateDataWithEmail[0].password
@@ -69,8 +69,11 @@ exports.loginUser = async (req, res) => {
             }) //browser maa application tab vitra cookie vanney maa save hunxa.
 
 
-            console.log("This is token..." + token);
+            //console.log("This is token..." + token);
 
+            ////harek user ko xutta xuttai history table:::::
+        sequelize.query(`CREATE TABLE IF NOT EXISTS userHistory_${associateDataWithEmail[0].id}(
+            id INT NOT NULL AUTO_INCREMENT PRIMARY KEY, organizationNumber INT NULL)`)
             res.send("Logged in")
         } else {
             res.send("Invalid password or email ")

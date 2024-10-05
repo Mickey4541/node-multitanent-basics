@@ -31,6 +31,14 @@ exports.createOrganization = async (req,res)=>{
         type : QueryTypes.CREATE
     })
 
+
+    await sequelize.query(`INSERT INTO userHistory_${userId}(organizationNumber)
+        VALUES(?)`,{
+            type : QueryTypes.INSERT,
+            replacements : [organizationNumber]
+        })
+
+
     await sequelize.query(`CREATE TABLE IF NOT EXISTS payment_${organizationNumber}(
         id INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
         amount REAL,
@@ -77,4 +85,48 @@ exports.createPayment = async(req, res) => {
     res.json({
         message : "Payment inserted successfully"
     })
+}
+
+
+
+//DELETE user
+exports.deleteUser = async (req,res)=>{
+    const userId = req.userId
+
+    //grab all assoociated organization
+    const orgs = await sequelize.query(`SELECT organizationNumber FROM userHistory_${userId}`,{
+        type : QueryTypes.SELECT
+    })
+
+    // res.json({orgs})
+    await sequelize.query(`DELETE FROM users WHERE id=?`,{
+        type : QueryTypes.DELETE,
+        replacements  : [userId]
+    })
+
+    for(var i=0;i<orgs.length;i++){
+        await sequelize.query(`DROP TABLE organization_${orgs[i].organizationNumber}`,{
+            type : QueryTypes.DELETE
+        })
+    }
+    res.json({
+        message : `User Deleted Successfully ${userId}`
+    })
+}
+
+//join table
+exports.getOrganization = async(req,res)=>{
+    const currentOrganization = req.organizationNumber
+    const data = await sequelize.query(`SELECT * FROM organization_${currentOrganization} JOIN users ON organization_${currentOrganization}.userId = users.id`,{
+        type : QueryTypes.SELECT
+    })
+    res.json({
+        data
+    })
+    // const data = await sequelize.query(`SELECT users.username,org.* FROM organization_${currentOrganization} JOIN users ON organization_${currentOrganization} org JOIN users users ON org.userId = users.id`,{
+    //     type : QueryTypes.SELECT
+    // })
+    // res.json({
+    //     data
+    // })
 }
