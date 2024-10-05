@@ -32,11 +32,17 @@ const io = new Server(server)
 
 //emit vaneko pathauni on vaneko listen garni
 io.on("connection", (socket)=>{
+    console.log("User connected");
+    
     socket.on("register",async(data)=>{
         console.log(data);
         const { username, password, email } = data;
         try {
-            await users.create({ username, password, email });
+            await users.create({ 
+                username, 
+                password, 
+                email 
+            });
             socket.emit("response", "Registration successful");
         } catch (error) {
             console.error(error);
@@ -47,5 +53,8 @@ io.on("connection", (socket)=>{
     //     console.log(data);
     //     socket.emit("response", "Data was received in backend")
     // })
+})
+socket.on("disconnect",()=>{
+    console.log("User disconnected")
 })
 })
