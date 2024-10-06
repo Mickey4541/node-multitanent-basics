@@ -118,6 +118,8 @@
             senderId : 1,
             receiverId : 2
         }
+        console.log(data);
+        
             //socket maa emit garni
             socket.emit("message", data)
             message.value = ""
@@ -128,7 +130,7 @@
     socket.on("broadCastMessage",(msg)=>{
         //console.log(msg)
         const paragraph = document.createElement("p") //<p>...</p>
-        paragraph.textContent = msg //<p>hey there</p>
+        paragraph.textContent = msg.message //<p>hey there</p>
         chatMessageContainer.appendChild(paragraph)
     })
 </script>

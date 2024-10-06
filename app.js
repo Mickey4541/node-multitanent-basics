@@ -90,6 +90,8 @@ const io = new Server(server)
 io.on("connection",(socket)=>{
     socket.on("message",async (msg)=>{
         //table maa insert
+        console.log(msg);
+        
         await sequelize.query(`INSERT INTO chats(senderId, receiverId,messages) VALUES(?,?,?)`,{
             type : QueryTypes.INSERT,
             replacements : [msg.senderId, msg.receiverId, msg.message]
